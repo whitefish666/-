@@ -9,17 +9,25 @@
 ## MCP连接 (WeChat DevTools)
 调试小程序前必须先连接开发者工具：
 
-### 快速连接
+### 第一步：关闭现有开发者工具
 ```bash
-# 1. 启动开发者工具并打开项目
-/e/software/微信web开发者工具/cli.bat auto --project "e:/Desk/Library/projects/village-exploration" --auto-port 9420
-
-# 2. 确认端口监听
-netstat -ano | grep 9420
+powershell -Command "Stop-Process -Name 'wechatdevtools' -Force -ErrorAction SilentlyContinue; Stop-Process -Name 'WeChatAppEx' -Force -ErrorAction SilentlyContinue"
 ```
 
-### MCP工具调用
-连接参数：
+### 第二步：启动开发者工具
+```bash
+cd "/e/software/微信web开发者工具" && ./cli.bat auto --project "e:/Desk/Library/projects/village-exploration" --auto-port 9420
+```
+成功标志：显示 `✔ auto`
+
+### 第三步：确认端口
+```bash
+netstat -ano | grep 9420
+```
+确认有进程在端口 9420 监听。
+
+### 第四步：连接MCP
+在 Claude Code 中使用 `mp_ensureConnection` 工具：
 ```json
 {
   "connection": {
@@ -30,7 +38,17 @@ netstat -ano | grep 9420
 }
 ```
 
-常用工具：`mp_navigate`, `mp_screenshot`, `page_getElement`, `element_tap`
+**注意**：如果 MCP 工具不可用，检查 `C:\Users\b4241\.claude\mcp.json` 中 `WEAPP_WS_ENDPOINT` 是否为 `ws://localhost:9420`
+
+### 常用MCP工具
+| 工具 | 用途 |
+|------|------|
+| `mp_ensureConnection` | 建立/重连到开发者工具 |
+| `mp_currentPage` | 获取当前页面信息 |
+| `mp_screenshot` | 截取当前页面 |
+| `mp_navigate` | 页面导航 |
+| `element_tap` | 点击元素 |
+| `page_getData` | 获取页面 data |
 
 ## 资源CDN
 - 游戏资源已迁移至腾讯云COS CDN
